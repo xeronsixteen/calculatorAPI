@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible"
+          content="ie=edge">
+    <title>Document</title>
+    <style>
+        .btn {
+            border-radius: 6px;
+        }
+    </style>
+
+</head>
+<body style="text-align: center">
+<h1>Калькулятор на JSON API</h1>
+
+<input id="x"
+       type="text">
+<hr>
+<input id="y"
+       type="text">
+
+<div style="padding-top: 10px;">
+    <button id="add"
+            class="btn">Сложение
+    </button>
+    <button id="subtract"
+            class="btn">Вычитание
+    </button>
+    <button id="multiply"
+            class="btn">Умножение
+    </button>
+    <button id="divide"
+            class="btn">Деление
+    </button>
+</div>
+
+<p id="answer">Ответ:</p>
+
+
+<script>
+    async function getResult(url) {
+        let first = document.getElementById('x')
+        let second = document.getElementById('y')
+        let a = first.value
+        let b = second.value
+        let response = await makeRequest(`http://localhost:8000/${url}/?a=${a}&b=${b}`)
+        let p = document.getElementById('answer')
+        p.innerText = response.answer
+    }
+
+    let btnAdd = document.getElementById('add')
+    btnAdd.addEventListener('click', () => getResult('add'))
+
+    let btnSubtract = document.getElementById('subtract')
+    btnSubtract.addEventListener('click', () => getResult('subtract'))
+
+    let btnMultiply = document.getElementById('multiply')
+    btnMultiply.addEventListener('click', () => getResult('multiply'))
+
+    let btnDivide = document.getElementById('divide')
+    btnDivide.addEventListener('click', () => getResult('divide'))
+
+    async function makeRequest(url, method = 'GET') {
+        let response = await fetch(url, {method});
+
+        if (response.ok) {
+            return await response.json();
+        } else {
+            let p = document.getElementById('answer')
+            let error = await response.json()
+            p.innerText = error.error
+            console.log(await response.json())
+        }
+    }
+
+
+</script>
+</body>
+</html>
